@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Environment variables
+config.env
+*.env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build files
+/build
+/dist
+/client/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+/coverage
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Certificates
+server/certs/
+*.pem
+*.key
+*.crt

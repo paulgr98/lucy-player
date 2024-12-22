@@ -1,0 +1,25 @@
+{
+  "name": "lucy-player",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "paulgr98",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "mongo-sanitize": "^1.1.0",
+    "mongoose": "^8.9.2",
+    "winston": "^3.17.0"
+  }
+}
