@@ -1,6 +1,7 @@
 # Lucy Player
 
 A web repository application for watching episodes of "Świat według Kiepskich".
+
 The name - "Lucy", comes from alterating the translation of word "kiepski" from Polish to English (lousy)
 
 ## Features
