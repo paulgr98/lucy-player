@@ -1,29 +1,18 @@
 const { MongoClient } = require("mongodb");
-require('dotenv').config();
+require("dotenv").config({ path: process.env.NODE_ENV === 'production' ? '.env' : './config.env' });
 
 const connectionString = process.env.CONNECTION_URI;
 const client = new MongoClient(connectionString);
 
-let _db;
-
-async function createIndexes() {
-  try {
-    const db = client.db("lucy");
-    await db.collection("episodes").createIndex({ season: 1, episode: 1 });
-    await db.collection("episodes").createIndex({ title: 1 });
-    console.log("Indexes created successfully");
-  } catch (error) {
-    console.error("Error creating indexes:", error);
-  }
-}
+let dbConnection;
 
 module.exports = {
   connectToServer: async function () {
     try {
       await client.connect();
-      _db = client.db("lucy");
-      await createIndexes();
+      dbConnection = client.db("lucy");
       console.log("Successfully connected to MongoDB.");
+      return dbConnection;
     } catch (err) {
       console.error("Error connecting to MongoDB:", err);
       throw err;
@@ -31,6 +20,6 @@ module.exports = {
   },
 
   getDb: function () {
-    return _db;
+    return dbConnection;
   },
 };

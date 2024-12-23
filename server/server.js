@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const path = require("path");
-const fs = require('fs');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const session = require('express-session');
@@ -70,22 +68,20 @@ app.use(session({
 
 app.use(require("./routes/episode"));
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/build')));
-
-// Handle React routing, return all requests to React app
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-});
-
 // Get MongoDB driver connection
 const dbo = require("./db/conn");
 
 const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, () => {
-    dbo.connectToServer(function (err) {
-        if (err) console.error(err);
-    });
-    console.log(`Server running on port ${PORT}`);
-});
+async function startServer() {
+    try {
+      await dbo.connectToServer();
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    } catch (err) {
+      console.error("Failed to start server:", err);
+    }
+  }
+  
+  startServer();
