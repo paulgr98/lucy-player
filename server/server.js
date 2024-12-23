@@ -11,10 +11,6 @@ require("dotenv").config({ path: process.env.NODE_ENV === 'production' ? '.env' 
 
 const corsOptions = {
     origin: [
-        'https://localhost:3000',
-        'http://localhost:3000',
-        'https://localhost',
-        'http://localhost',
         'https://lucy-player-a11e.onrender.com'
     ],
     credentials: true,
@@ -35,6 +31,18 @@ app.options('*', cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
 app.use(limiter);
+
+const apiKeyMiddleware = (req, res, next) => {
+    const apiKey = req.headers['x-api-key'];
+    
+    if (!apiKey || apiKey !== process.env.API_KEY) {
+        return res.status(403).json({ error: 'Unauthorized access' });
+    }
+    next();
+};
+
+app.use(apiKeyMiddleware);
+
 
 app.use(helmet.contentSecurityPolicy({
     directives: {

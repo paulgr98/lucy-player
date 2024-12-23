@@ -20,6 +20,7 @@ export default function EpisodeList({ selectedSeason, setSelectedSeason }) {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
+                        'x-api-key': process.env.API_KEY
                     },
                     mode: 'cors',
                     credentials: 'include'

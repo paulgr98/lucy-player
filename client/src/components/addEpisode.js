@@ -57,9 +57,13 @@ export default function Add() {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/episode/add`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'x-api-key': process.env.API_KEY
                 },
                 body: JSON.stringify(newEpisode),
+                mode: 'cors',
+                credentials: 'include'
             });
             
             if (!response.ok) {
