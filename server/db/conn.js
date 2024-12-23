@@ -5,7 +5,6 @@ const connectionString = process.env.CONNECTION_URI;
 const client = new MongoClient(connectionString, {
     ssl: true,
     tls: true,
-    tlsAllowInvalidCertificates: false,
     minPoolSize: 1,
     maxPoolSize: 10,
     serverApi: {
