@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const path = require("path");
-const https = require('https');
 const fs = require('fs');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -10,15 +9,16 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
 
-require("dotenv").config({ path: "./config.env" });
+require("dotenv").config({ path: process.env.NODE_ENV === 'production' ? '.env' : './config.env' });
 
 const corsOptions = {
     origin: [
         'https://localhost:3000',
         'http://localhost:3000',
         'https://localhost',
-        'http://localhost'
-    ],                              // List all allowed origins
+        'http://localhost',
+        'https://lucy-player-jhnm.onrender.com'
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
@@ -60,11 +60,13 @@ app.use(session({
         mongoUrl: process.env.CONNECTION_URI
     }),
     cookie: {
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24 // 24 hours
     }
 }));
+
 
 app.use(require("./routes/episode"));
 
@@ -76,30 +78,14 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
-// SSL certificate options
-const options = {
-    key: fs.readFileSync('certs/private.key'),
-    cert: fs.readFileSync('certs/certificate.crt')
-};
-
 // Get MongoDB driver connection
 const dbo = require("./db/conn");
 
-// Create HTTPS server on 443
-https.createServer(options, app).listen(443, () => {
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, () => {
     dbo.connectToServer(function (err) {
         if (err) console.error(err);
     });
-    console.log('HTTPS Server running on port 443');
-});
-
-// HTTP server on 80 that redirects to HTTPS
-const httpApp = express();
-
-httpApp.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
-});
-
-httpApp.listen(80, () => {
-    console.log('HTTP Server running on port 80 (redirecting to HTTPS)');
+    console.log(`Server running on port ${PORT}`);
 });
