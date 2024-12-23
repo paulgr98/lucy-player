@@ -13,10 +13,17 @@ const MongoStore = require('connect-mongo');
 require("dotenv").config({ path: "./config.env" });
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://localhost:3000', 'http://localhost', 'https://localhost', 'http://localhost:5000', 'https://localhost:5000'],
+    origin: [
+        'https://localhost:3000',
+        'http://localhost:3000',
+        'https://localhost',
+        'http://localhost'
+    ],                              // List all allowed origins
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Set-Cookie'],
+    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 const limiter = rateLimit({
@@ -24,19 +31,27 @@ const limiter = rateLimit({
     max: 10000 // limit each IP to 100 requests per windowMs
 });
 
-app.use(limiter);
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
+
 app.use(helmet());
+app.use(express.json());
+app.use(limiter);
+
 app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https:"],
+        imgSrc: ["'self'", "data:", "https:", "http:"],
+        connectSrc: ["'self'", "http:", "https:"],
+        fontSrc: ["'self'", "data:", "https:"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'self'"]
     },
 }));
-app.use(express.json());
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -50,6 +65,7 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 // 24 hours
     }
 }));
+
 app.use(require("./routes/episode"));
 
 // Serve static files from the React app
@@ -79,6 +95,7 @@ https.createServer(options, app).listen(443, () => {
 
 // HTTP server on 80 that redirects to HTTPS
 const httpApp = express();
+
 httpApp.get('*', (req, res) => {
     res.redirect('https://' + req.headers.host + req.url);
 });
