@@ -59,7 +59,7 @@ export default function Add() {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'x-api-key': process.env.API_KEY
+                    'x-api-key': process.env.REACT_APP_API_KEY
                 },
                 body: JSON.stringify(newEpisode),
                 mode: 'cors',
