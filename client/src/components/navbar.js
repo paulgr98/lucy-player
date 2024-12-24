@@ -7,7 +7,16 @@ export default function Navbar({ setSelectedSeason }) {
 
     const openRandomEpisode = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/episode/`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/episode/`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'x-api-key': process.env.REACT_APP_API_KEY
+                },
+                mode: 'cors',
+                credentials: 'include'
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch episodes');
             }
